@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Password Generator</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        /* General Styles */
+        body {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #f0f9ff;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            background: #334155;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            /* Increased max-width */
+            width: 100%;
+            text-align: center;
+            position: relative;
+            /* For absolute positioning of the refresh button */
+        }
+
+        h1 {
+            font-size: 36px;
+            /* Increased font-size */
+            color: #f9f871;
+            margin-bottom: 30px;
+            /* Increased margin-bottom */
+            font-weight: 600;
+        }
+
+        /* Input Group Styles */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #password-display {
+            background-color: #475569;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            color: #f0f9ff;
+            font-size: 18px;
+            /* Increased font-size */
+            width: 100%;
+            text-align: center;
+            /* Added transition */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #password-display:focus {
+            background-color: #5a6b87;
+            /* Darker shade on focus */
+        }
+
+        #copy-button {
+            position: absolute;
+            right: 50px;
+            /* Adjusted position */
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 20px;
+            /* Increased font-size */
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        #copy-button:hover {
+            color: #22c55e;
+        }
+
+        /* Slider Styles */
+        .slider-container {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            /* Increased font-size */
+            margin-bottom: 5px;
+            color: #cbd5e1;
+            /* Improved contrast */
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            /* Increased height */
+            background: #64748b;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            /* Increased width */
+            height: 24px;
+            /* Increased height */
+            background: #6366f1;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background-color: #7c7ef3;
+            /* Lighter shade on hover */
+        }
+
+        /* Form Check Styles */
+        .form-check {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .form-check-input {
+            margin-right: 10px;
+            transform: scale(1.2);
+            /* Increased size */
+        }
+
+        .form-check-label {
+            font-size: 16px;
+            /* Increased font-size */
+            color: #cbd5e1;
+            /* Improved contrast */
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: #6366f1;
+            border: none;
+            color: #fff;
+            padding: 14px 24px;
+            /* Increased padding */
+            font-size: 18px;
+            /* Increased font-size */
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        /* Copy Success Message Styles */
+        .copy-success {
+            color: #22c55e;
+            font-size: 16px;
+            /* Increased font-size */
+            margin-top: 10px;
+        }
+
+        /* Strength Indicator Styles */
+        .strength-indicator {
+            margin: 20px 0;
+            /* Increased margin */
+            text-align: left;
+            font-size: 16px;
+            /* Increased font-size */
+            font-weight: bold;
+            color: #cbd5e1;
+            /* Improved contrast */
+        }
+
+        .strength-bar {
+            height: 12px;
+            /* Increased height */
+            border-radius: 6px;
+            /* Increased border-radius */
+            background: #475569;
+            overflow: hidden;
+            margin-top: 8px;
+            /* Increased margin-top */
+        }
+
+        .strength-bar div {
+            height: 100%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Toggle Theme Button Styles */
+        .toggle-theme {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #f9f871;
+            font-size: 20px;
+            /* Increased font-size */
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-theme:hover {
+            color: #fffa8f;
+            /* Lighter shade on hover */
+        }
+
+        /* Light Mode Styles */
+        body.light-mode {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            color: #1f2937;
+        }
+
+        body.light-mode .container {
+            background: #f9fafb;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode h1 {
+            color: #1e293b;
+        }
+
+        body.light-mode #password-display {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+
+        body.light-mode .slider-label,
+        body.light-mode .form-check-label,
+        body.light-mode .strength-indicator {
+            color: #4b5563;
+        }
+
+        /* Refresh Button Styles */
+        #refresh-button {
+            position: absolute;
+            left: 50px;
+            /* Adjusted position */
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 20px;
+            /* Increased font-size */
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        #refresh-button:hover {
+            color: #6366f1;
+        }
+
+        /* Range Value Bubble */
+        .slider-container {
+            position: relative;
+            /* Required for positioning the bubble */
+        }
+
+        .range-value-bubble {
+            position: absolute;
+            top: -35px;
+            /* Position above the slider */
+            left: calc(var(--thumb-position) * 100%);
+            /* Use the CSS variable */
+            transform: translateX(-50%);
+            background-color: #6366f1;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            /* Prevent text wrapping */
+            pointer-events: none;
+            /* Make sure the bubble doesn't interfere with the slider */
+            opacity: 0;
+            /* Initially hidden */
+            transition: opacity 0.3s ease;
+        }
+
+        .slider-container:hover .range-value-bubble {
+            opacity: 1;
+            /* Show on hover */
+        }
+
+        /* Footer Styles */
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        body.light-mode .footer {
+            color: #4b5563;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="toggle-theme" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
+        <i class="fa fa-adjust"></i>
+    </button>
+    <div class="container">
+        <h1>Enhanced Password Generator</h1>
+        <div class="input-group">
+            <input type="text" id="password-display" placeholder="Generate a strong password!" readonly>
+            <button id="copy-button" onclick="copyPassword()" title="Copy Password">
+                <i class="fa fa-copy"></i>
+            </button>
+            <!-- Refresh Button -->
+            <button id="refresh-button" onclick="generatePassword()" title="Generate New Password">
+                <i class="fa fa-sync-alt"></i>
+            </button>
+        </div>
+        <div class="slider-container">
+            <label for="password-length" class="slider-label">
+                <span>Password Length: <span id="length-value">12</span></span>
+                <span>(4 - 64)</span>
+            </label>
+            <input type="range" id="password-length" min="4" max="64" value="12"
+                oninput="updateLengthValue(this.value); updateThumbPosition(this)">
+            <div class="range-value-bubble" id="range-value-bubble">12</div>
+        </div>
+        <div class="character-options">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="uppercase" checked>
+                <label class="form-check-label" for="uppercase">Include Uppercase Letters</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="lowercase" checked>
+                <label class="form-check-label" for="lowercase">Include Lowercase Letters</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="numbers" checked>
+                <label class="form-check-label" for="numbers">Include Numbers</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="symbols">
+                <label class="form-check-label" for="symbols">Include Symbols</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="avoid-ambiguous">
+                <label class="form-check-label" for="avoid-ambiguous">Avoid Ambiguous Characters (0, O, I, l)</label>
+            </div>
+        </div>
+        <div class="strength-indicator">
+            Password Strength: <span id="strength-text">N/A</span>
+            <div class="strength-bar">
+                <div id="strength-bar-fill" style="width: 0%; background: #475569;"></div>
+            </div>
+        </div>
+        <button class="btn-primary" onclick="generatePassword()">Generate Password</button>
+        <p id="copy-success" class="copy-success" style="display: none;">Password copied to clipboard!</p>
+
+        <!-- Footer -->
+        <div class="footer">
+            &copy; 2025 Password Generator. All rights reserved. By <a href="www.udavinwijesundara.com">Udavin</a>
+        </div>
+    </div>
+
+    <script>
+        function updateLengthValue(value) {
+            document.getElementById('length-value').textContent = value;
+            document.getElementById('range-value-bubble').textContent = value;
+        }
+
+        function generatePassword() {
+            const length = document.getElementById('password-length').value;
+            const includeUppercase = document.getElementById('uppercase').checked;
+            const includeLowercase = document.getElementById('lowercase').checked;
+            const includeNumbers = document.getElementById('numbers').checked;
+            const includeSymbols = document.getElementById('symbols').checked;
+            const avoidAmbiguous = document.getElementById('avoid-ambiguous').checked;
+
+            let characters = "";
+            if (includeUppercase) characters += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (includeLowercase) characters += "abcdefghijklmnopqrstuvwxyz";
+            if (includeNumbers) characters += "0123456789";
+            if (includeSymbols) characters += "!@#$%^&*()_+~`|}{[]:;?><,./-=`";
+            if (avoidAmbiguous) {
+                characters = characters.replace(/[0OIl]/g, '');
+            }
+
+            if (!characters) {
+                alert("Please select at least one character set.");
+                return;
+            }
+
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                password += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+
+            document.getElementById('password-display').value = password;
+            updateStrengthIndicator(password);
+        }
+
+        function copyPassword() {
+            const passwordDisplay = document.getElementById('password-display');
+            passwordDisplay.select();
+            document.execCommand("copy");
+            const copySuccess = document.getElementById('copy-success');
+            copySuccess.style.display = 'block';
+            setTimeout(() => {
+                copySuccess.style.display = 'none';
+            }, 2000);
+        }
+
+        function updateStrengthIndicator(password) {
+            const strengthBar = document.getElementById('strength-bar-fill');
+            const strengthText = document.getElementById('strength-text');
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            switch (strength) {
+                case 0:
+                case 1:
+                    strengthBar.style.width = "20%";
+                    strengthBar.style.background = "#ef4444"; // Red for weak
+                    strengthText.textContent = "Weak";
+                    break;
+                case 2:
+                    strengthBar.style.width = "40%";
+                    strengthBar.style.background = "#f97316"; // Orange for fair
+                    strengthText.textContent = "Fair";
+                    break;
+                case 3:
+                    strengthBar.style.width = "60%";
+                    strengthBar.style.background = "#eab308"; // Yellow for good
+                    strengthText.textContent = "Good";
+                    break;
+                case 4:
+                    strengthBar.style.width = "80%";
+                    strengthBar.style.background = "#10b981"; // Green for strong
+                    strengthText.textContent = "Strong";
+                    break;
+                case 5:
+                    strengthBar.style.width = "100%";
+                    strengthBar.style.background = "#22c55e"; // Dark green for very strong
+                    strengthText.textContent = "Very Strong";
+                    break;
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        // Function to update thumb position and bubble position
+        function updateThumbPosition(input) {
+            const val = input.value;
+            const min = input.min ? parseFloat(input.min) : 0;
+            const max = input.max ? parseFloat(input.max) : 100;
+            const range = max - min;
+            const position = (val - min) / range;
+
+            input.style.setProperty('--thumb-position', position);
+        }
+
+        // Initialize thumb position on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateThumbPosition(document.getElementById('password-length'));
+        });
+    </script>
+</body>
+
+</html>
